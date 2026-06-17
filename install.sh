@@ -1,6 +1,6 @@
 #!/bin/bash
 # install.sh
-# Installation and Autostart setup for WashLover Coin Machine Hybrid on Raspberry Pi 5
+# Complete Installation and Autostart setup for WashLover Coin Machine Hybrid on Raspberry Pi 5
 
 echo "==============================================================="
 echo "       Starting Installation for WashLover Coin Machine        "
@@ -20,8 +20,9 @@ echo "3. Installing System & Hardware Dependencies..."
 # network-manager สำหรับสแกน WiFi, rpi-lgpio สำหรับแก้ปัญหา RPi.GPIO บน Pi 5
 sudo apt install -y python3-pip network-manager curl git python3-rpi-lgpio python3-gpiozero
 
-echo "4. Installing UI (Kivy) Dependencies..."
-sudo apt install -y python3-kivy python3-sdl2 
+echo "4. Installing UI (Kivy & Images) Dependencies..."
+# เพิ่ม python3-pil เพื่อให้ Kivy โหลดภาพ QR Code (AsyncImage) ได้สมบูรณ์
+sudo apt install -y python3-kivy python3-sdl2 python3-pil
 
 echo "5. Installing Python Libraries (Web & IoT)..."
 # ใช้ apt สำหรับแพ็กเกจหลักเพื่อหลีกเลี่ยงข้อจำกัด PEP 668 บน Bookworm
