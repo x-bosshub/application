@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # app.py
-# curl -o /home/pi5/application/app.py http://141.98.19.190:4000/static/coin_machine_hybrid/app.py
-# 
+# Hybride Version
+
 APP_VERSION = "5.6.0"
 import os
 import sys
