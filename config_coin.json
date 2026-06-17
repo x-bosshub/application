@@ -3,7 +3,7 @@
     "status": true,
     "active": true,
     "error": 0,
-    "coin_stock": 100,
+    "coin_stock": 0,
     "current_credit": 0.0,
     "bill_pulse_count": 0,
     "coins_dispensed_count": 0
