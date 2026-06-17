@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WashLover OS - Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --glass-bg: rgba(16, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #00f3ff;
+            --primary-hover: #00c3cc;
+            --secondary: #64748b;
+            --success: #00e676;
+            --warning: #ffea00;
+            --danger: #ff1744;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 230, 118, 0.05) 0%, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            padding: 24px;
+        }
+
+        /* --- Login Screen --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            background-color: var(--bg-dark);
+            transition: opacity 0.5s ease;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .login-box p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="password"], input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #0088cc);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 243, 255, 0.5);
+        }
+
+        .btn-danger {
+            background: rgba(255, 23, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(255, 23, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 23, 68, 0.4);
+        }
+
+        /* --- Main Dashboard Layout --- */
+        #main-app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 30px 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-menu {
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-link {
+            padding: 14px 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-link.logout {
+            margin-top: auto;
+            color: var(--danger);
+        }
+
+        .nav-link.logout:hover {
+            background: rgba(255, 23, 68, 0.1);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px 40px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .system-badges {
+            display: flex;
+            gap: 12px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bg-primary { background-color: var(--primary); }
+        .bg-success { background-color: var(--success); }
+        .bg-warning { background-color: var(--warning); }
+        .text-primary { color: var(--primary); }
+        .text-success { color: var(--success); }
+
+        /* Terminal Box */
+        .terminal {
+            background: #050914;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            color: #00f3ff;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Tab Content */
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast Notification */
+        #toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .toast {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 300px;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="glass-card login-box">
+            <h1>WashLover OS</h1>
+            <p>Admin Control Panel Access</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>System Password</label>
+                    <input type="password" id="sys_password" placeholder="••••••••" required minlength="4" style="text-align: center; font-size: 1.5rem; letter-spacing: 8px;">
+                </div>
+                <button type="submit" class="btn btn-primary">VERIFY ACCESS</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <span>⚡</span> WashLover
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" onclick="switchTab('dashboard', this)">
+                    <span>📊</span> System Overview
+                </a>
+                <a href="#" class="nav-link" onclick="switchTab('coin', this)">
+                    <span>🪙</span> Coin Manager
+                </a>
+                <a href="#" class="nav-link" onclick="switchTab('cmd', this)">
+                    <span>💻</span> Command Center
+                </a>
+                <a href="#" class="nav-link" onclick="switchTab('settings', this)">
+                    <span>⚙️</span> API Settings
+                </a>
+                <a href="#" class="nav-link logout" onclick="logout()">
+                    <span>🚪</span> Terminate Session
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h2 class="page-title" id="current-page-title">System Overview</h2>
+                <div class="system-badges">
+                    <div class="badge">ID: BOSSHUB-IOT</div>
+                    <div class="badge">v5.6.0</div>
+                    <div class="badge text-success">● ONLINE</div>
+                </div>
+            </header>
+
+            <div id="tab-dashboard" class="tab-pane active">
+                <div class="dashboard-grid">
+                    <div class="glass-card">
+                        <div class="stat-label">Core Temperature</div>
+                        <div class="stat-value text-primary">42.5°C</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Uptime: 14h 22m</div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="stat-label">System Resources</div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                <span>CPU Load</span><span>35%</span>
+                            </div>
+                            <div class="progress-container"><div class="progress-bar bg-primary" style="width: 35%;"></div></div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                <span>RAM Usage</span><span>60%</span>
+                            </div>
+                            <div class="progress-container"><div class="progress-bar bg-success" style="width: 60%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="border-left: 4px solid var(--warning);">
+                        <div class="stat-label">Coin Hopper Stock</div>
+                        <div class="stat-value" style="color: var(--warning);">1,250 <span style="font-size: 1rem;">Coins</span></div>
+                        <button class="btn btn-primary" style="padding: 8px 16px; margin-top: 10px;" onclick="switchTab('coin', document.querySelectorAll('.nav-link')[1])">Manage Stock</button>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">Network Interfaces</h3>
+                    <div class="terminal" style="height: auto; font-size: 0.9rem; padding: 15px;">
+                        eth0: ⬇️ 14.2MB | ⬆️ 5.1MB<br>
+                        wlan0: ⬇️ 2.4MB | ⬆️ 1.1MB
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-coin" class="tab-pane">
+                <div class="glass-card" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 20px; color: var(--warning);">Hardware Stock Control</h3>
+                    <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
+                        <div class="form-group" style="margin: 0; min-width: 250px;">
+                            <label>Amount (Coins)</label>
+                            <input type="number" id="coin_input" placeholder="e.g. 500" min="1">
+                        </div>
+                        <button class="btn btn-primary" style="width: auto;" onclick="updateStock('add')">+ Add</button>
+                        <button class="btn btn-danger" style="width: auto;" onclick="updateStock('sub')">- Subtract</button>
+                        <button class="btn" style="background: rgba(255,255,255,0.1); color: white; width: auto;" onclick="updateStock('set')">= Set Exact</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-cmd" class="tab-pane">
+                <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 20px;">Execute Shell / API</h3>
+                        <div class="form-group">
+                            <label>Action</label>
+                            <select id="cmd_action">
+                                <option value="shell">Terminal Command</option>
+                                <option value="update">Force OTA Update</option>
+                                <option value="bosshub">Install BossHub Agent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Parameters</label>
+                            <textarea rows="3" placeholder="ls -la"></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="showToast('Command executed successfully', 'success')">Deploy Command</button>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 20px;">Live Output Console</h3>
+                        <div class="terminal">root@washlover-pi5:~# System ready...<br>_</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-settings" class="tab-pane">
+                <div class="glass-card">
+                    <h3 style="margin-bottom: 20px;">Core Configurations</h3>
+                    <div class="dashboard-grid">
+                        <div class="form-group">
+                            <label>API Key (Payment)</label>
+                            <input type="text" value="F8C04-06726831FD">
+                        </div>
+                        <div class="form-group">
+                            <label>Admin Password</label>
+                            <input type="password" value="242424" minlength="4">
+                        </div>
+                        <div class="form-group">
+                            <label>Coin per Baht Ratio</label>
+                            <input type="number" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Timeout (Seconds)</label>
+                            <input type="number" value="120">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showToast('Settings Saved', 'success')" style="max-width: 200px;">Save Configuration</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // --- 1. Login Logic ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pwd = document.getElementById('sys_password').value;
+            
+            // Validate Minimum 4 chars (already handled by HTML5 minlength, but double check)
+            if(pwd.length >= 4) {
+                // Mock Authentication Success
+                document.getElementById('login-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'flex';
+                    showToast('Authentication Successful. Welcome Boss.', 'success');
+                }, 500);
+            }
+        });
+
+        // --- 2. Logout Logic ---
+        function logout() {
+            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('login-screen').style.opacity = '1';
+                document.getElementById('sys_password').value = '';
+            }, 50);
+        }
+
+        // --- 3. Tab Switching Logic ---
+        function switchTab(tabId, el) {
+            // Update Menu Active State
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            el.classList.add('active');
+
+            // Update Page Title
+            document.getElementById('current-page-title').innerText = el.innerText.trim();
+
+            // Hide all tabs, show target
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        // --- 4. Toast Notification Logic ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.borderLeftColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            
+            toast.innerHTML = `
+                <div style="font-weight: 500;">${message}</div>
+                <div style="cursor: pointer; opacity: 0.6;" onclick="this.parentElement.remove()">✕</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- 5. Mock Update Stock ---
+        function updateStock(action) {
+            const val = document.getElementById('coin_input').value;
+            if(!val || val.length < 1) {
+                showToast('Please enter a valid amount', 'danger');
+                return;
+            }
+            showToast(`Coin stock updated (${action}): ${val} coins`, 'success');
+            document.getElementById('coin_input').value = '';
+        }
+    </script>
+</body>
+</html>
