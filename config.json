@@ -1,0 +1,60 @@
+{
+    "app": {
+        "version": "5.6.0",
+        "base_path": "/home/pi5/application",
+        "admin_password": "242424",
+        "auto_reboot": false
+    },
+    "mqtt": {
+        "broker": "141.98.19.212",
+        "port": 1883
+    },
+    "hardware": {
+        "biller_sensor_pin": 25,
+        "coin_sensor_pin": 12,
+        "gpio_relay": 26,
+        "gpio_relay_revert": 21,
+        "tm_clk": 2,
+        "tm_dio": 3
+    },
+    "payment": {
+        "api_base": "http://141.98.19.212:5560/api-pay",
+        "api_key": "F8C04-06726831FD",
+        "timeout_seconds": 120
+    },
+    "ui": {
+        "background_color": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "show_setting_button": true,
+        "contact_title": "\u0e15\u0e34\u0e14\u0e15\u0e48\u0e2d\u0e40\u0e08\u0e49\u0e32\u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48",
+        "contact_text": "WashLover.com"
+    },
+    "coin_per_baht_ratio": 10,
+    "BILL_PULSE_TIMEOUT": 0.5,
+    "RELAY_MAX_ACTIVE_TIME": 5,
+    "SELECT_AMOUNT": [
+        20,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        120,
+        130,
+        140,
+        150
+    ],
+    "BILL_PULSE_MAPPING": {
+        "2": 20,
+        "5": 50,
+        "10": 100,
+        "50": 500,
+        "100": 1000
+    }
+}
