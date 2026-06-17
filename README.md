@@ -42,7 +42,7 @@
    ต้องวางโปรเจกต์ไว้ที่ /home/pi5/application เท่านั้น (ตาม Path ที่ระบุไว้ในซอร์สโค้ด)
    ```bash
    cd /home/pi5
-   git clone [https://github.com/x-bosshub/application.git](https://github.com/x-bosshub/application.git)
+   git clone https://github.com/x-bosshub/application.git
    cd application
    
    ```
