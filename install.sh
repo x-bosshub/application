@@ -80,20 +80,19 @@ EOF
 cat <<EOF | sudo tee /etc/systemd/system/coin_app.service > /dev/null
 [Unit]
 Description=Coin Machine API Service
-After=network.target multi-user.target
-
+After=network.target graphical.target
 [Service]
 Type=simple
-User=root
+User=pi5
 WorkingDirectory=/home/pi5/application
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/pi5/.Xauthority
+ExecStartPre=/bin/sleep 5
 ExecStart=/usr/bin/python3 /home/pi5/application/app.py
 Restart=always
 RestartSec=10
 [Install]
-WantedBy=multi-user.target
-
+WantedBy=graphical.target
 EOF
 
 echo "10. Enabling and Starting Services..."
