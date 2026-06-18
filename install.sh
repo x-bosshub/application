@@ -91,7 +91,6 @@ Environment=XAUTHORITY=/home/pi5/.Xauthority
 ExecStart=/usr/bin/python3 /home/pi5/application/app.py
 Restart=always
 RestartSec=10
-
 [Install]
 WantedBy=multi-user.target
 
@@ -99,12 +98,12 @@ EOF
 
 echo "10. Enabling and Starting Services..."
 sudo systemctl daemon-reload
-sudo systemctl enable coin_api.service
-sudo systemctl enable coin_app.service
+sudo systemctl enable coin_api.service > /dev/null
+sudo systemctl enable coin_app.service > /dev/null
 
 # สั่งให้ Service เริ่มทำงานทันที
-sudo systemctl start coin_api.service
-sudo systemctl start coin_app.service
+sudo systemctl start coin_api.service > /dev/null
+sudo systemctl start coin_app.service > /dev/null
 
 echo "==============================================================="
 echo "       Installation & Auto Start Setup Completed!              "
