@@ -9,7 +9,7 @@ echo "==============================================================="
 APP_DIR="/home/pi5/application"
 
 echo "1. Updating system packages..."
-sudo apt update
+sudo apt update -y
 
 echo "2. Installing ngrok..."
 curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
