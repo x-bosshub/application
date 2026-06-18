@@ -66,8 +66,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=$APP_DIR
-ExecStart=/usr/bin/python3 $APP_DIR/api.py
+WorkingDirectory=/home/pi5/application
+ExecStart=/usr/bin/python3 /home/pi5/application/api.py
 Restart=always
 RestartSec=5
 [Install]
@@ -88,7 +88,7 @@ User=root
 WorkingDirectory=/home/pi5/application
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/pi5/.Xauthority
-Exec=/usr/bin/python3 /home/pi5/application/app.py
+ExecStart=/usr/bin/python3 /home/pi5/application/app.py
 Restart=always
 RestartSec=10
 
