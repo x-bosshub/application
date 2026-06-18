@@ -14,7 +14,7 @@ sudo apt update -y
 echo "2. Installing ngrok..."
 curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
 echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-sudo apt update && sudo apt install ngrok -y
+sudo apt install ngrok -y
 
 echo "3. Installing System & Hardware Dependencies..."
 # network-manager สำหรับสแกน WiFi, rpi-lgpio สำหรับแก้ปัญหา RPi.GPIO บน Pi 5
@@ -65,12 +65,11 @@ After=network.target
 
 [Service]
 Type=simple
-User=pi5
+User=root
 WorkingDirectory=$APP_DIR
 ExecStart=/usr/bin/python3 $APP_DIR/api.py
 Restart=always
 RestartSec=5
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -80,22 +79,22 @@ EOF
 # ==========================================
 cat <<EOF | sudo tee /etc/systemd/system/coin_app.service > /dev/null
 [Unit]
-Description=WashLover Coin Machine UI Service
-After=graphical.target
-Wants=graphical.target
+Description=Coin Machine API Service
+After=network.target multi-user.target
 
 [Service]
 Type=simple
-User=pi5
-WorkingDirectory=$APP_DIR
-Environment=DISPLAY=:0.0
+User=root
+WorkingDirectory=/home/pi5/application
+Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/pi5/.Xauthority
-ExecStart=/usr/bin/python3 $APP_DIR/app.py
+Exec=/usr/bin/python3 /home/pi5/application/app.py
 Restart=always
-RestartSec=5
+RestartSec=10
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target
+
 EOF
 
 echo "10. Enabling and Starting Services..."
