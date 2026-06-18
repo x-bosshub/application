@@ -1,9 +1,9 @@
 #!/bin/bash
 # install.sh
-# Complete Installation and Autostart setup for WashLover Coin Machine Hybrid on Raspberry Pi 5
+# Complete Installation, Reinstall and Autostart setup for WashLover Coin Machine Hybrid on Raspberry Pi 5
 
 echo "==============================================================="
-echo "       Starting Installation for WashLover Coin Machine        "
+echo "       Starting Installation/Reinstall for WashLover Coin Machine"
 echo "==============================================================="
 
 APP_DIR="/home/pi5/application"
@@ -53,11 +53,28 @@ fi
 echo "8. Setting up Permissions (chmod 777)..."
 sudo chmod -R 777 $APP_DIR
 
-echo "9. Creating Systemd Services for Auto Start..."
+echo "9. Cleaning up previous Autostart configurations (Reinstall mode)..."
+echo "Stopping and removing old services..."
+sudo systemctl stop coin_app.service 2>/dev/null
+sudo systemctl disable coin_app.service 2>/dev/null
+sudo rm -f /etc/systemd/system/coin_app.service
+
+sudo systemctl stop coin_api.service 2>/dev/null
+sudo systemctl disable coin_api.service 2>/dev/null
+sudo rm -f /etc/systemd/system/coin_api.service
+
+sudo systemctl daemon-reload
+
+echo "Removing old Autostart desktop files and scripts..."
+sudo rm -f /home/pi5/.config/autostart/coin_app.desktop
+sudo rm -f $APP_DIR/run_app.sh
+
+echo "10. Creating Auto Start Services & Scripts..."
 
 # ==========================================
-# 9.1 Service for API (api.py)
+# 10.1 Systemd Service for API (api.py)
 # ==========================================
+echo "Setting up Background Service for API..."
 cat <<EOF | sudo tee /etc/systemd/system/coin_api.service > /dev/null
 [Unit]
 Description=WashLover Coin Machine API Service
@@ -75,43 +92,58 @@ WantedBy=multi-user.target
 EOF
 
 # ==========================================
-# 9.2 Service for APP (app.py - Kivy UI)
+# 10.2 XDG Autostart & Loop Script for APP (app.py - Kivy UI)
 # ==========================================
-cat <<EOF | sudo tee /etc/systemd/system/coin_app.service > /dev/null
-[Unit]
-Description=WashLover Coin Machine APP (Kivy UI)
-After=network.target graphical.target
+echo "Setting up Desktop Autostart for UI (Wayland/NoVNC compatible)..."
 
-[Service]
-Type=simple
-User=pi5
-WorkingDirectory=/home/pi5/application
-Environment=DISPLAY=:0
-Environment=XAUTHORITY=/home/pi5/.Xauthority
-ExecStartPre=/bin/sleep 5
-ExecStart=/usr/bin/python3 /home/pi5/application/app.py
-Restart=always
-RestartSec=10
+# 1. สร้างสคริปต์สแกนและรันแอปแบบวนลูป (Loop Runner)
+cat << 'EOF' > $APP_DIR/run_app.sh
+#!/bin/bash
+# run_app.sh
+# สคริปต์สำหรับรันและตรวจสอบสถานะแอป Kivy UI ของตู้แลกเหรียญ
 
-[Install]
-WantedBy=graphical.target
+cd /home/pi5/application
+
+# วนลูปเปิดแอปตลอดเวลา ถ้าแอปปิดหรือแครช จะเปิดใหม่ใน 10
+while true; do
+    echo "Starting WashLover Coin Machine APP..."
+    /usr/bin/python3 app.py
+    echo "App crashed or closed. Restarting in 10 seconds..."
+    sleep 10
+done
 EOF
 
-echo "10. Enabling and Starting Services..."
+# ตั้งสิทธิ์ให้สคริปต์รันได้
+sudo chmod +x $APP_DIR/run_app.sh
+
+# 2. สร้างไฟล์ Autostart ของระบบหน้าจอ (.desktop)
+mkdir -p /home/pi5/.config/autostart
+cat << EOF > /home/pi5/.config/autostart/coin_app.desktop
+[Desktop Entry]
+Type=Application
+Name=WashLover Coin Machine APP
+Exec=/home/pi5/application/run_app.sh
+Terminal=false
+X-GNOME-Autostart-enabled=true
+EOF
+
+# ป้องกันปัญหาไฟล์ติดสิทธิ์ Root ตอนติดตั้งผ่าน sudo
+sudo chown -R pi5:pi5 /home/pi5/.config
+sudo chown pi5:pi5 $APP_DIR/run_app.sh
+
+echo "11. Enabling and Starting Services..."
 sudo systemctl daemon-reload
 sudo systemctl enable coin_api.service > /dev/null
-sudo systemctl enable coin_app.service > /dev/null
 
-# สั่งให้ Service เริ่มทำงานทันที
+# สั่งให้ Service API เริ่มทำงานทันที
 sudo systemctl start coin_api.service > /dev/null
-sudo systemctl start coin_app.service > /dev/null
 
 echo "==============================================================="
 echo "       Installation & Auto Start Setup Completed!              "
-echo "       Services 'coin_api' and 'coin_app' are running.         "
+echo "       API Service is running in the background.               "
 echo "==============================================================="
 echo "  ตรวจสอบสถานะ API: sudo systemctl status coin_api             "
-echo "  ตรวจสอบสถานะ APP: sudo systemctl status coin_app             "
-echo "  *หมายเหตุ: หาก Kivy UI ไม่ขึ้นจอ โปรดตรวจสอบให้แน่ใจว่า        "
-echo "  ได้ใช้ sudo raspi-config ปรับ Display เป็น X11 เรียบร้อยแล้ว     "
+echo "  ตรวจสอบสถานะ APP: แอป UI จะเด้งขึ้นมาอัตโนมัติเมื่อหน้าจอ Desktop โหลดเสร็จ"
+echo "  *หมายเหตุ: โปรดแน่ใจว่าระบบแสดงผลอยู่ในโหมด Wayland (ค่าเริ่มต้น)"
+echo "  เพื่อให้ NoVNC ใช้งานได้ตามปกติ"
 echo "==============================================================="
