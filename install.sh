@@ -9,7 +9,7 @@ echo "==============================================================="
 APP_DIR="/home/pi5/application"
 
 echo "1. Updating system packages..."
-sudo apt update -y
+sudo apt update
 
 echo "2. Installing ngrok..."
 curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
@@ -29,7 +29,7 @@ echo "5. Installing Python Libraries (Web & IoT)..."
 sudo apt install -y python3-flask python3-requests python3-paho-mqtt python3-tz
 
 # ติดตั้งแพ็กเกจเสริมผ่าน pip (ถ้าจำเป็น) โดยอนุญาตให้อนุโลมระบบ
-pip3 install pytz --break-system-packages
+sudo pip3 install pytz --break-system-packages
 
 echo "6. Creating necessary directories..."
 mkdir -p $APP_DIR/fonts
@@ -104,8 +104,8 @@ sudo systemctl enable coin_api.service
 sudo systemctl enable coin_app.service
 
 # สั่งให้ Service เริ่มทำงานทันที
-sudo systemctl restart coin_api.service
-sudo systemctl restart coin_app.service
+sudo systemctl start coin_api.service
+sudo systemctl start coin_app.service
 
 echo "==============================================================="
 echo "       Installation & Auto Start Setup Completed!              "
