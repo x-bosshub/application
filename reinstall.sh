@@ -3,13 +3,13 @@
 # Complete Reinstallation and Service Reset for WashLover Coin Machine Hybrid on Raspberry Pi 5
 
 echo "==============================================================="
-echo "       Starting Reinstallation for WashLover Coin Machine     "
+echo "       Starting Complete Reinstallation for WashLover         "
 echo "==============================================================="
 
 APP_DIR="/home/pi5/application"
 
 echo "---------------------------------------------------------------"
-echo " PHASE 1: Removing Existing Services & Configurations          "
+echo " PHASE 1: Removing Existing Services & Dependencies            "
 echo "---------------------------------------------------------------"
 
 echo "1. Stopping active services..."
@@ -27,6 +27,20 @@ sudo rm -f /etc/systemd/system/coin_app.service
 echo "4. Reloading systemd daemon..."
 sudo systemctl daemon-reload
 sudo systemctl reset-failed
+
+echo "5. Removing Ngrok and its repository lists..."
+sudo apt-get remove --purge -y ngrok
+sudo rm -f /etc/apt/sources.list.d/ngrok.list
+sudo rm -f /etc/apt/trusted.gpg.d/ngrok.asc
+
+echo "6. Removing installed Python & UI dependencies..."
+sudo apt-get remove --purge -y python3-kivy python3-sdl2 python3-pil python3-flask python3-requests python3-paho-mqtt python3-tz python3-rpi-lgpio python3-gpiozero
+
+echo "7. Removing PIP packages..."
+pip3 uninstall -y pytz --break-system-packages
+
+echo "8. Cleaning up cache (Without autoremove)..."
+sudo apt-get clean
 
 echo "---------------------------------------------------------------"
 echo " PHASE 2: Running Fresh Installation Setup                     "
