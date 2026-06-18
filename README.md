@@ -4,6 +4,6 @@
    cd application
    
    chmod +x install.sh
-   sudo ./install.sh
+   sudo bash ./install.sh
    
 ```
