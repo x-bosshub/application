@@ -44,8 +44,7 @@ sudo apt-get remove --purge -y python3-kivy python3-sdl2 python3-pil python3-fla
 echo "8. Removing PIP packages..."
 pip3 uninstall -y pytz --break-system-packages
 
-echo "9. Cleaning up unused system packages..."
-sudo apt-get autoremove -y
+echo "9. Cleaning up cache..."
 sudo apt-get clean
 
 echo "==============================================================="
