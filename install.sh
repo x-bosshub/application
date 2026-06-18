@@ -79,8 +79,9 @@ EOF
 # ==========================================
 cat <<EOF | sudo tee /etc/systemd/system/coin_app.service > /dev/null
 [Unit]
-Description=Coin Machine API Service
+Description=WashLover Coin Machine APP (Kivy UI)
 After=network.target graphical.target
+
 [Service]
 Type=simple
 User=pi5
@@ -91,6 +92,7 @@ ExecStartPre=/bin/sleep 5
 ExecStart=/usr/bin/python3 /home/pi5/application/app.py
 Restart=always
 RestartSec=10
+
 [Install]
 WantedBy=graphical.target
 EOF
